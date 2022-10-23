@@ -2,16 +2,21 @@ package com.example.cooolweather.util;
 
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.cooolweather.db.City;
 import com.example.cooolweather.db.County;
 import com.example.cooolweather.db.Province;
+import com.example.cooolweather.gson.Weather;
+import com.google.gson.Gson;
 
 public class Utility {
 //    解析和处理服务器返回的省级数据
+
     public static boolean handleProvinceResponse(String response){
         if(!TextUtils.isEmpty(response)){
             try {
@@ -69,5 +74,18 @@ public class Utility {
             }
         }
         return false;
+    }
+
+    public static Weather handleWeatherResponse(String response){
+        try {
+            Log.d("Utility", "handleWeatherResponse: ");
+            JSONObject jsonObject = new JSONObject(response);
+            JSONArray jsonArray = jsonObject.getJSONArray("HeWeather");
+            String weatherContent = jsonArray.getJSONObject(0).toString();
+            return new Gson().fromJson(weatherContent, Weather.class);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return  null;
     }
 }
